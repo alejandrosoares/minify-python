@@ -19,7 +19,7 @@ class File:
     def __init__(self, path, name, extension):
         self.path = path
         self.name = name
-        self.ext = extension
+        self.extension = extension
 
 class CodeFile(File):
     def __init__(self, path, name, extension):
@@ -66,7 +66,7 @@ class ImageFile(File):
         Compress the instance if you
         extension is .jpg or .jpeg
         """
-        if self.ext in EXT_TO_COMPRESS:
+        if self.extension in EXT_TO_COMPRESS:
             original_file = f"{self.path}/{self.name}"
             compressed_file = f"{self.path}/compressed_{self.name}"
 
@@ -84,11 +84,9 @@ class ImageFile(File):
             print(f"o: {o_size/1000000} - c: {c_size/1000000}")
 
             if c_size > o_size:
-                print("remove compressed")
-                os.delete(compressed_file)
+                os.remove(compressed_file)
             else:
-                print("rename compressed")
-                os.delete(original_file)
+                os.remove(original_file)
                 os.rename(compressed_file, original_file)
 
 class FileInstanceCreator:
@@ -117,13 +115,17 @@ class Process:
     dst_folder = DST_FOLDER
 
     def __init__(self):
-        self.src = self.get_src()
-        self.dst = self.get_dst()
-        self.folder_project = self.get_folder_project()
-        self.re_search = self.get_regex_search()
+        self.src = self.set_src()
+        self.dst = self.set_dst()
+        self.folder_project = self.set_folder_project()
+        self.re_search = self.set_regex_search()
         self.files = []
 
-    def get_src(self):
+    def set_src(self):
+        """
+        Set source path
+        @return: PosixPath
+        """
         try:
             src = Path(f"../{sys.argv[1]}")
             self.folder_project = src.name
@@ -134,7 +136,11 @@ class Process:
 
         return src
     
-    def get_dst(self):
+    def set_dst(self):
+        """
+        Set destination path
+        @return: PosixPath
+        """
         try:
             dst = Path(f"../{sys.argv[2]}/{self.dst_folder}")  
         except IndexError:
@@ -142,10 +148,11 @@ class Process:
 
         return dst 
 
-    def get_folder_project(self):
+    def set_folder_project(self):
         """
-        Write the folder name of project
+        Set the folder name of project
         passed in the source path 
+        @return: str
         """
         folder = self.src.name
 
@@ -155,9 +162,9 @@ class Process:
 
         return folder
 
-    def get_regex_search(self):
+    def set_regex_search(self):
         """
-        Write the regex used for find the files
+        Set the regex used for find the files
         @return: str
         """
         regex = self.dst / "**/*.*"
