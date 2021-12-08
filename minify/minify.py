@@ -6,18 +6,20 @@ import glob
 import requests
 from PIL import Image
 
-from utils import get_url
+from utils import get_url, get_size
 from settings import (
     DST_FOLDER,
     VALID_EXTENSIONS_FILE,
-    VALID_EXTENSIONS_IMG
+    VALID_EXTENSIONS_IMG,
+    EXT_TO_COMPRESS,
+    QUALITY_COMPRESSION
 )
 
 class File:
     def __init__(self, path, name, extension):
         self.path = path
         self.name = name
-        self.extension = extension
+        self.ext = extension
 
 class CodeFile(File):
     def __init__(self, path, name, extension):
@@ -27,11 +29,11 @@ class CodeFile(File):
         self.minified = False
         super(__class__, self).__init__(path, name, extension)
 
-    def get_raw_content(self):
+    def __get_raw_content(self):
         with open(f"{self.path}/{self.name}", 'r') as c:
             self.raw_content = c.read()
 
-    def make_request(self):
+    def __make_request(self):
         url =  get_url(self.extension)
         if url:
             payload = {'input': self.raw_content}
@@ -40,7 +42,7 @@ class CodeFile(File):
             if r.status_code == 200:
                 self.minified_content = r.text
         
-    def write_minified_content(self):
+    def __write_minified_content(self):
         if self.minified_content:
             with open(f"{self.path}/{self.name}", 'w') as m:
                 m.write(self.minified_content)
@@ -50,11 +52,10 @@ class CodeFile(File):
         """
         Minify the instance
         """
-        self.get_raw_content()
-        self.make_request()
-        self.write_minified_content()
+        self.__get_raw_content()
+        self.__make_request()
+        self.__write_minified_content()
         
-
 class ImageFile(File):
     def __init__(self, path, name, extension):
         self.compressed = False
@@ -65,7 +66,30 @@ class ImageFile(File):
         Compress the instance if you
         extension is .jpg or .jpeg
         """
-        pass
+        if self.ext in EXT_TO_COMPRESS:
+            original_file = f"{self.path}/{self.name}"
+            compressed_file = f"{self.path}/compressed_{self.name}"
+
+            o = Image.open(original_file)
+            o_size = get_size(original_file)
+            
+            # compress
+            o.save(
+                compressed_file, 
+                optimized=True, 
+                quality=QUALITY_COMPRESSION
+                )
+            c_size = get_size(compressed_file)
+
+            print(f"o: {o_size/1000000} - c: {c_size/1000000}")
+
+            if c_size > o_size:
+                print("remove compressed")
+                os.delete(compressed_file)
+            else:
+                print("rename compressed")
+                os.delete(original_file)
+                os.rename(compressed_file, original_file)
 
 class FileInstanceCreator:
     def get_extension(file):

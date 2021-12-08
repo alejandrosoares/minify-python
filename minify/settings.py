@@ -16,3 +16,10 @@ VALID_EXTENSIONS_IMG = [
     ".jpeg"
 ]
 
+# Compression
+EXT_TO_COMPRESS = [
+     ".jpg",
+    ".jpeg"
+]
+
+QUALITY_COMPRESSION = 75

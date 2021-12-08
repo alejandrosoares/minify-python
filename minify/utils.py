@@ -1,8 +1,15 @@
+import os
+
 from settings import (
     URL_HTML,
     URL_CSS,
     URL_JS
 )
+
+GET_SIZE = os.path.getsize
+
+def get_size(path_file):
+    return GET_SIZE(path_file)
 
 def get_url(extension):
     """
@@ -21,3 +28,4 @@ def get_url(extension):
         url = ""
 
     return url
+
