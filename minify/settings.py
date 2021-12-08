@@ -18,7 +18,7 @@ VALID_EXTENSIONS_IMG = [
 
 # Compression
 EXT_TO_COMPRESS = [
-     ".jpg",
+    ".jpg",
     ".jpeg"
 ]
 

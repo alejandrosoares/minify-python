@@ -1,5 +1,59 @@
-### MINIFY-PYTHON
+# MINIFY-PYTHON
+Minify html, css and java script files with services of <a href="https://www.toptal.com/">Toptal</a>,
+through the use of their API and on the other hand optimize the images of your project to reduce your weight.
+<br>
+The script is written in python
 
+# Important
+- The project has been tested in a linux environment. You can may have conflict in the path of Windows. The project has not been fully adapted for the latter.
+- The original project is <b>not</b> modified, a copy of project is created.
+
+# Installation
+Follow the next steps:
+-  Download the folder and place it in the same parent folder as your project. For example: <br>
+   ```
+    parent_folder  
+    │
+    └───my_project
+    │   
+    └───minify
+    ```
+-  Create a virtualenvironment and install the packages described in <b>minify/requirements.txt</b>.
+
+# Usage
+- Run command:
+```bash
+    minify.py source_path destination_path
+```
+For example, assuming I have a project named <b>my_project</b> and I want to put the folder with the minified files
+in the parent folder of <b>my_project</b>, the command is: <br>
+```bash
+    minify.py  ./my_project  ./
+```
+- And the following folder will be created: <br>
+```
+parent_folder  
+│
+└───my_project
+│   
+└───minify
+│   
+└───prod
+    │   
+    └───my_project
+```
+- In <b>prod</b> folder there will be copy of <b>my_project</b> with the minified files and compressed images.
+- <b>source_path</b> and <b>destination_path</b> are taken from parent folder of minify folder. 
+- By default the copy of project is created inside of a folder named <b>prod</b> and the optimization quality is of 65. These
+and others parameters can be changed minify/settings.py
+
+# Project Files description
+```
+minify/
+│  minify.py: main file that containing project logic.
+│  settings.py: file that contain the configurations.
+│  utils.py: file that contain helper functions for minify.py
+```
 
 # Resources
 
