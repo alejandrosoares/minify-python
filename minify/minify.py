@@ -42,7 +42,7 @@ class CodeFile(File):
             if r.status_code == 200:
                 self.minified_content = r.text
         
-    def __write_minified_content(self):
+    def __set_minified_content(self):
         if self.minified_content:
             with open(f"{self.path}/{self.name}", 'w') as m:
                 m.write(self.minified_content)
@@ -54,7 +54,7 @@ class CodeFile(File):
         """
         self.__get_raw_content()
         self.__make_request()
-        self.__write_minified_content()
+        self.__set_minified_content()
         
 class ImageFile(File):
     def __init__(self, path, name, extension):
@@ -80,8 +80,6 @@ class ImageFile(File):
                 quality=QUALITY_COMPRESSION
                 )
             c_size = get_size(compressed_file)
-
-            print(f"o: {o_size/1000000} - c: {c_size/1000000}")
 
             if c_size > o_size:
                 os.remove(compressed_file)
