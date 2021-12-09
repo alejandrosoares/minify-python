@@ -1,3 +1,7 @@
+"""
+.. module:: settings
+    :synopsis: Contains the project settings.
+"""
 DST_FOLDER = "prod"
 
 URL_CSS = 'https://www.toptal.com/developers/cssminifier/raw'

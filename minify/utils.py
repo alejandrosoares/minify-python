@@ -1,3 +1,7 @@
+"""
+.. module:: utils
+    :synopsis: Contains helper functions used in the minify.py module.
+"""
 import os
 
 from settings import (

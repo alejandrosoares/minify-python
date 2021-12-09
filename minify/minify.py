@@ -1,3 +1,7 @@
+"""
+.. module:: minify
+    :synopsis: All classes used in the project are here.
+"""
 from distutils.dir_util import copy_tree
 from pathlib import Path
 import sys
