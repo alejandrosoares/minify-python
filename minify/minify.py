@@ -18,8 +18,7 @@ from settings import (
 
 class File:
     """
-    Base class for *File classes
-    self.file: contains the relative path and name of file
+    Base class for '*File' classes
     """
     def __init__(self, pathname, extension):
         self.extension = extension
@@ -28,7 +27,7 @@ class File:
 class CodeFile(File):
     """
     Class for html, css and js files
-    self.process minifies these files
+    :self.process: minifies these files
     """
     def __init__(self, pathname, extension):
         self.raw_content = None
@@ -66,7 +65,7 @@ class CodeFile(File):
 class ImageFile(File):
     """
     Class for image files
-    self.process() compresses these files
+    :self.process(): compresses these files
     """
     def __init__(self, file, extension):
         self.compressed = False
@@ -76,13 +75,13 @@ class ImageFile(File):
         """
         Take self.pathname and return 
         the path and name separately
-        @return: tuple(str, str)
+        :@return: tuple(str, str)
         """
         return ntpath.split(self.pathname)
     
     def __generate_compressed_pathname(self):
         """
-        @return: PosixPath
+        :@return: PosixPath
         """
         path, name = self.__get_path_name()
         return Path(f"{path}/compressed_{name}")
@@ -139,7 +138,7 @@ class FileInstanceCreator:
 class Process:
     """
     Class that trigger processing of each file instance
-    self.files: list that contains instances of *File
+    :self.files: list that contains instances of '*File'
     """
     dst_folder = DST_FOLDER
 
@@ -153,7 +152,7 @@ class Process:
     def __set_src(self):
         """
         Set source path
-        @return: PosixPath
+        :@return: src(PosixPath)
         """
         try:
             src = Path(f"../{sys.argv[1]}")
@@ -168,7 +167,7 @@ class Process:
     def __set_dst(self):
         """
         Set destination path
-        @return: PosixPath
+        :@return: dst(PosixPath)
         """
         try:
             dst = Path(f"../{sys.argv[2]}/{self.dst_folder}")  
@@ -181,7 +180,7 @@ class Process:
         """
         Set the folder name of project
         passed in the source path 
-        @return: str
+        :@return: folder(str)
         """
         folder = self.src.name
 
@@ -194,7 +193,7 @@ class Process:
     def __set_regex(self):
         """
         Set the regex used for find the files
-        @return: str
+        :@return: regex(str)
         """
         regex = self.dst / "**/*.*"
         regex = regex.as_posix()
