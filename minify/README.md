@@ -5,7 +5,7 @@ through the use of their API and on the other hand optimize the images of your p
 The script is written in python
 
 # Important
-- The project has been tested in a linux environment. You can may have conflict in the path of Windows. The project has not been fully adapted for the latter.
+- The project has been perform in Linux platform and has not been probed in others platforms.
 - The original project is <b>not</b> modified, a copy of project is created.
 
 # Installation

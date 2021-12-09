@@ -2,6 +2,7 @@ from distutils.dir_util import copy_tree
 from pathlib import Path
 import sys
 import os
+import ntpath
 import glob
 import requests
 from PIL import Image
@@ -16,21 +17,22 @@ from settings import (
 )
 
 class File:
-    def __init__(self, path, name, extension):
-        self.path = path
-        self.name = name
+    """
+    self.file: contains the relative path and name of file
+    """
+    def __init__(self, pathname, extension):
         self.extension = extension
+        self.pathname = pathname
 
 class CodeFile(File):
-    def __init__(self, path, name, extension):
-
+    def __init__(self, pathname, extension):
         self.raw_content = None
         self.minified_content = None
         self.minified = False
-        super(__class__, self).__init__(path, name, extension)
+        super(__class__, self).__init__(pathname, extension)
 
     def __get_raw_content(self):
-        with open(f"{self.path}/{self.name}", 'r') as c:
+        with open(self.pathname, 'r') as c:
             self.raw_content = c.read()
 
     def __make_request(self):
@@ -44,7 +46,7 @@ class CodeFile(File):
         
     def __set_minified_content(self):
         if self.minified_content:
-            with open(f"{self.path}/{self.name}", 'w') as m:
+            with open(self.pathname, 'w') as m:
                 m.write(self.minified_content)
                 self.minified = True
 
@@ -57,9 +59,24 @@ class CodeFile(File):
         self.__set_minified_content()
         
 class ImageFile(File):
-    def __init__(self, path, name, extension):
+    def __init__(self, file, extension):
         self.compressed = False
-        super(__class__, self).__init__(path, name, extension)
+        super(__class__, self).__init__(file, extension)
+
+    def __get_path_name(self):
+        """
+        Take self.pathname and return 
+        the path and name separately
+        @return: tuple(str, str)
+        """
+        return ntpath.split(self.pathname)
+    
+    def __generate_compressed_pathname(self):
+        """
+        @return: PosixPath
+        """
+        path, name = self.__get_path_name()
+        return Path(f"{path}/compressed_{name}")
 
     def process(self):
         """
@@ -67,59 +84,64 @@ class ImageFile(File):
         Saved compressed img with prefix compressed_
         """
         if self.extension in EXT_TO_COMPRESS:
-            original_file = f"{self.path}/{self.name}"
-            compressed_file = f"{self.path}/compressed_{self.name}"
+            c_pathname = self.__generate_compressed_pathname()
 
-            o = Image.open(original_file)
-            o_size = get_size(original_file)
+            o = Image.open(self.pathname)
+            o_size = get_size(self.pathname)
             
             # compress
             o.save(
-                compressed_file, 
+                c_pathname, 
                 optimized=True, 
                 quality=QUALITY_COMPRESSION
                 )
-            c_size = get_size(compressed_file)
+            c_size = get_size(c_pathname)
 
             if c_size > o_size:
-                os.remove(compressed_file)
+                os.remove(c_pathname)
             else:
-                os.remove(original_file)
-                os.rename(compressed_file, original_file)
+                os.remove(self.pathname)
+                os.rename(c_pathname, self.pathname)
+            
+            self.compressed = True
 
 class FileInstanceCreator:
-    def get_extension(file):
+    """
+    Class to create the differents files instances
+    """
+    def __get_extension(file):
         dot_index = file.rfind(".", 1)
         return file[dot_index:]
 
-    def get_path_and_name(file):
-        return os.path.split(file)
-    
     @staticmethod
     def create(file):
-        e = __class__.get_extension(file)
-        p, n = __class__.get_path_and_name(file)
+        e = __class__.__get_extension(file)
+        pathname = Path(file)
 
         if e in VALID_EXTENSIONS_FILE:
-            instance = CodeFile(p, n, e)
+            instance = CodeFile(pathname, e)
         elif e in VALID_EXTENSIONS_IMG:
-            instance = ImageFile(p, n, e)
+            instance = ImageFile(pathname, e)
         else:
             instance = None
 
         return instance
 
 class Process:
+    """
+    Class that trigger processing of each file instance
+    self.files: list that contains instances of *File
+    """
     dst_folder = DST_FOLDER
 
     def __init__(self):
-        self.src = self.set_src()
-        self.dst = self.set_dst()
-        self.folder_project = self.set_folder_project()
-        self.re_search = self.set_regex_search()
+        self.src = self.__set_src()
+        self.dst = self.__set_dst()
+        self.folder_project = self.__set_folder()
+        self.re_search = self.__set_regex()
         self.files = []
 
-    def set_src(self):
+    def __set_src(self):
         """
         Set source path
         @return: PosixPath
@@ -134,7 +156,7 @@ class Process:
 
         return src
     
-    def set_dst(self):
+    def __set_dst(self):
         """
         Set destination path
         @return: PosixPath
@@ -146,7 +168,7 @@ class Process:
 
         return dst 
 
-    def set_folder_project(self):
+    def __set_folder(self):
         """
         Set the folder name of project
         passed in the source path 
@@ -160,7 +182,7 @@ class Process:
 
         return folder
 
-    def set_regex_search(self):
+    def __set_regex(self):
         """
         Set the regex used for find the files
         @return: str
@@ -169,26 +191,26 @@ class Process:
         regex = regex.as_posix()
         return regex
 
-    def copy_files(self):
+    def __copy_files(self):
         copy_tree(
             self.src.as_posix(), 
             self.dst.as_posix()
             )
     
-    def load_files(self):
+    def __load_files(self):
         for file in glob.iglob(self.re_search, recursive=True):
             instance = FileInstanceCreator.create(file)
             if instance:
                 self.files.append(instance)
 
-    def process_files(self):
+    def __process_files(self):
         for f in self.files:
             f.process()
 
     def run(self):
-        self.copy_files()
-        self.load_files()
-        self.process_files()
+        self.__copy_files()
+        self.__load_files()
+        self.__process_files()
 
 
 if __name__ == "__main__":
