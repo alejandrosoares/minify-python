@@ -18,6 +18,7 @@ from settings import (
 
 class File:
     """
+    Base class for *File classes
     self.file: contains the relative path and name of file
     """
     def __init__(self, pathname, extension):
@@ -25,6 +26,10 @@ class File:
         self.pathname = pathname
 
 class CodeFile(File):
+    """
+    Class for html, css and js files
+    self.process minifies these files
+    """
     def __init__(self, pathname, extension):
         self.raw_content = None
         self.minified_content = None
@@ -59,6 +64,10 @@ class CodeFile(File):
         self.__set_minified_content()
         
 class ImageFile(File):
+    """
+    Class for image files
+    self.process() compresses these files
+    """
     def __init__(self, file, extension):
         self.compressed = False
         super(__class__, self).__init__(file, extension)
