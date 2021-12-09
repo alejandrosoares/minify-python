@@ -2,13 +2,13 @@
 Minify html, css and java script files with services of <a href="https://www.toptal.com/">Toptal</a>,
 through the use of their API and on the other hand optimize the images of your project to reduce your weight.
 <br>
-The script is written in python
+The script is written in python.
 
-# Important
+## Important
 - The project has been perform in Linux platform and has not been probed in others platforms.
 - The original project is <b>not</b> modified, a copy of project is created.
 
-# Installation
+## Installation
 Follow the next steps:
 -  Download the folder and place it in the same parent folder as your project. For example: <br>
    ```
@@ -20,7 +20,7 @@ Follow the next steps:
     ```
 -  Create a virtualenvironment and install the packages described in <b>minify/requirements.txt</b>.
 
-# Usage
+## Usage
 - Run command:
 ```bash
     minify.py source_path destination_path
@@ -45,17 +45,26 @@ parent_folder
 - In <b>prod</b> folder there will be copy of <b>my_project</b> with the minified files and compressed images.
 - <b>source_path</b> and <b>destination_path</b> are taken from parent folder of minify folder. 
 - By default the copy of project is created inside of a folder named <b>prod</b> and the optimization quality is of 65. These
-and others parameters can be changed minify/settings.py
+and others parameters can be changed minify/settings.py.
 
-# Project Files description
+## Project Files description
 ```
 minify/
 │  minify.py: main file that containing project logic.
 │  settings.py: file that contain the configurations.
 │  utils.py: file that contain helper functions for minify.py
 ```
+## Contributing
+Any pull request are welcome.
 
-# Resources
+### Where could we continue?
+- Perform unit tests.
+- Join css files into a main css file.
+- Use some API service to convert images to webp format.
+
+I plan to do these tasks in the future, but if you want we can do them together.
+
+## Resources
 
 https://www.toptal.com/developers/cssminifier/python
 
