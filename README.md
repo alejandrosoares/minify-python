@@ -1,12 +1,12 @@
 # MINIFY-PYTHON
 Minify html, css and java script files with services of <a href="https://www.toptal.com/">Toptal</a>,
-through the use of their API and on the other hand optimize the images of your project to reduce your weight.
+through the use of their API and optimize the images of your project to reduce its size.
 <br>
 The script is written in python.
 
 ## Important
 - The project has been perform in Linux platform and has not been probed in others platforms.
-- The original project is <b>not</b> modified, a copy of project is created.
+- The original project is <b>not</b> modified, a copy of the project is created.
 
 ## Installation
 Follow the next steps:
@@ -44,7 +44,7 @@ parent_folder
 ```
 - In <b>prod</b> folder there will be copy of <b>example</b> project with the minified files and compressed images.
 - <b>source_path</b> and <b>destination_path</b> are taken from parent folder of minify folder. 
-- By default the copy of project is created inside of a folder named <b>prod</b> and the optimization quality is of 65. These
+- By default the copy of the project is created inside a folder named <b>prod</b> and the optimization quality is of 65. These
 and others parameters can be changed minify/settings.py.
 
 ## Project Files description

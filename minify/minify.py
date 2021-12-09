@@ -93,7 +93,7 @@ class ImageFile(File):
     def process(self):
         """
         Compress the instance if you extension is .jpg or .jpeg
-        Saved compressed img with prefix compressed_
+        Saved compressed img with prefix 'compressed_'
         """
         if self.extension in EXT_TO_COMPRESS:
             c_pathname = self.__generate_compressed_pathname()
