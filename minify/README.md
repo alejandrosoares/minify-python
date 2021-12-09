@@ -62,8 +62,6 @@ Any pull request are welcome.
 - Join css files into a main css file.
 - Use some API service to convert images to webp format.
 
-I plan to do these tasks in the future, but if you want we can do them together.
-
 ## Resources
 
 https://www.toptal.com/developers/cssminifier/python
