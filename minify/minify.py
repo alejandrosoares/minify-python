@@ -2,6 +2,7 @@
 .. module:: minify
     :synopsis: All classes used in the project are here.
 """
+
 from distutils.dir_util import copy_tree
 from pathlib import Path
 import sys
@@ -11,7 +12,11 @@ import glob
 import requests
 from PIL import Image
 
-from utils import get_url, get_size
+from utils import (
+    get_url, 
+    get_size,
+    get_extension
+)
 from settings import (
     DST_FOLDER,
     VALID_EXTENSIONS_FILE,
@@ -20,9 +25,22 @@ from settings import (
     QUALITY_COMPRESSION
 )
 
+def create_instance(file):
+    e = get_extension(file)
+    pathname = Path(file)
+
+    if e in VALID_EXTENSIONS_FILE:
+        instance = CodeFile(pathname, e)
+    elif e in VALID_EXTENSIONS_IMG:
+        instance = ImageFile(pathname, e)
+    else:
+        instance = None
+
+    return instance
+
 class File:
     """
-    Base class for '*File' classes
+    Base class for (all)File classes
     """
     def __init__(self, pathname, extension):
         self.extension = extension
@@ -69,7 +87,7 @@ class CodeFile(File):
 class ImageFile(File):
     """
     Class for image files
-    :self.process(): compresses these files
+    :process(): compresses these files
     """
     def __init__(self, file, extension):
         self.compressed = False
@@ -93,7 +111,7 @@ class ImageFile(File):
     def process(self):
         """
         Compress the instance if you extension is .jpg or .jpeg
-        Saved compressed img with prefix 'compressed_'
+        Saved compressed img with prefix compressed
         """
         if self.extension in EXT_TO_COMPRESS:
             c_pathname = self.__generate_compressed_pathname()
@@ -117,32 +135,10 @@ class ImageFile(File):
             
             self.compressed = True
 
-class FileInstanceCreator:
-    """
-    Class to create the differents files instances
-    """
-    def __get_extension(file):
-        dot_index = file.rfind(".", 1)
-        return file[dot_index:]
-
-    @staticmethod
-    def create(file):
-        e = __class__.__get_extension(file)
-        pathname = Path(file)
-
-        if e in VALID_EXTENSIONS_FILE:
-            instance = CodeFile(pathname, e)
-        elif e in VALID_EXTENSIONS_IMG:
-            instance = ImageFile(pathname, e)
-        else:
-            instance = None
-
-        return instance
-
 class Process:
     """
     Class that trigger processing of each file instance
-    :self.files: list that contains instances of '*File'
+    :files: list that contains instances of CodeFile and ImageFile
     """
     dst_folder = DST_FOLDER
 
@@ -211,7 +207,7 @@ class Process:
     
     def __load_files(self):
         for file in glob.iglob(self.re_search, recursive=True):
-            instance = FileInstanceCreator.create(file)
+            instance = create_instance(file)
             if instance:
                 self.files.append(instance)
 
@@ -223,7 +219,6 @@ class Process:
         self.__copy_files()
         self.__load_files()
         self.__process_files()
-
 
 if __name__ == "__main__":
 

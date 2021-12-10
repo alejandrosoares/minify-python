@@ -12,6 +12,10 @@ from settings import (
 
 GET_SIZE = os.path.getsize
 
+def get_extension(file):
+    dot_index = file.rfind(".", 1)
+    return file[dot_index:]
+
 def get_size(pathname):
     """
     Return the size of file
